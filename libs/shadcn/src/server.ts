@@ -1,2 +1,2 @@
-// Use this file to export React server components
-export * from './lib/hello-server';
+// Reserved for server-safe exports when this library adds them.
+export {};
