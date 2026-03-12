@@ -33,11 +33,8 @@ export const AddEmployeeForm = ({
     await onSubmit();
   };
 
-  const fullName = `${form.lastName} ${form.firstName}`.trim();
-
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <EmployeeFormField
           label="Last Name"
@@ -84,7 +81,7 @@ export const AddEmployeeForm = ({
           label="Employee Code"
           name="employeeCode"
           value={form.employeeCode}
-          readOnly
+          error={errors.employeeCode}
           onChange={onChange}
         />
 
