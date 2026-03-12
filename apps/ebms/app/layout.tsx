@@ -1,8 +1,13 @@
-import { ClerkProvider } from '@clerk/nextjs';
 import './global.css';
 
 export const metadata = {
-  title: 'h',
+  title: 'Pinecone dash',
+  icons: {
+    icon: [
+      { url: '/favicon-light.svg', media: '(prefers-color-scheme: light)' },
+      { url: '/favicon-dark.svg', media: '(prefers-color-scheme: dark)' },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -12,9 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <ClerkProvider>{children}</ClerkProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
