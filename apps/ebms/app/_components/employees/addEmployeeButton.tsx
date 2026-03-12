@@ -4,9 +4,7 @@ type AddEmployeeButtonProps = {
   onClick: () => void;
 };
 
-export const AddEmployeeButton = ({
-  onClick,
-}: AddEmployeeButtonProps) => {
+const AddEmployeeButton = ({ onClick }: AddEmployeeButtonProps) => {
   return (
     <button
       type="button"
@@ -17,3 +15,5 @@ export const AddEmployeeButton = ({
     </button>
   );
 };
+
+export default AddEmployeeButton;

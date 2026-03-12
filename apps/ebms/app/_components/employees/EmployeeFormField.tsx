@@ -1,6 +1,7 @@
 'use client';
 
-import { AddEmployeeFieldName } from "../lib/employee/types";
+import type { ChangeEvent } from 'react';
+import type { AddEmployeeFieldName } from '../lib/employee/types';
 
 type EmployeeFormFieldProps = {
   label: string;
@@ -8,22 +9,58 @@ type EmployeeFormFieldProps = {
   value: string;
   error?: string;
   type?: 'text' | 'email' | 'date';
+  placeholder?: string;
   readOnly?: boolean;
   onChange: (name: AddEmployeeFieldName, value: string) => void;
 };
 
-export const EmployeeFormField = ({
+const getInputClassName = (error?: string): string => {
+  const baseClassName = [
+    'h-8 w-full rounded-[16px] border bg-[#f8f8f8] px-4 text-[12px]',
+    'text-[#2b2f38] outline-none transition placeholder:text-[#9aa3b2]',
+  ].join(' ');
+
+  if (error) {
+    return `${baseClassName} border-rose-500 focus:border-rose-500`;
+  }
+
+  return `${baseClassName} border-[#c7ccd6] focus:border-[#b9c1cf]`;
+};
+
+const renderError = (error?: string) => {
+  if (!error) {
+    return <div className="min-h-[16px]" />;
+  }
+
+  return (
+    <p className="min-h-[16px] text-[11px] leading-4 text-rose-600">
+      {error}
+    </p>
+  );
+};
+
+const EmployeeFormField = ({
   label,
   name,
   value,
   error,
   type = 'text',
+  placeholder,
   readOnly = false,
   onChange,
 }: EmployeeFormFieldProps) => {
+  const handleChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ): void => {
+    onChange(name, event.target.value);
+  };
+
   return (
-    <div className="flex flex-col gap-2">
-      <label htmlFor={name} className="text-sm font-medium text-slate-700">
+    <div className="flex flex-col gap-1">
+      <label
+        htmlFor={name}
+        className="text-[12px] font-normal leading-5 text-[#4b5565]"
+      >
         {label}
       </label>
 
@@ -33,11 +70,14 @@ export const EmployeeFormField = ({
         type={type}
         value={value}
         readOnly={readOnly}
-        onChange={(event) => onChange(name, event.target.value)}
-        className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-900"
+        placeholder={placeholder}
+        onChange={handleChange}
+        className={getInputClassName(error)}
       />
 
-      {error ? <p className="text-sm text-rose-600">{error}</p> : null}
+      {renderError(error)}
     </div>
   );
 };
+
+export default EmployeeFormField;

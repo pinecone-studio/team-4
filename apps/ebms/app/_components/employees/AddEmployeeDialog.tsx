@@ -1,64 +1,83 @@
 'use client';
 
-import { useState } from 'react';
-import { AddEmployeeForm } from './AddEmployeeForm';
-import {
-  AddEmployeeFieldName,
-  AddEmployeeFormData,
-  AddEmployeeFormErrors,
-} from '../lib/employee/types';
-import { createInitialAddEmployeeForm } from '../lib/employee/createInitialAddEmployeeForm';
+import { useState } from "react";
+import { AddEmployeeFieldName, AddEmployeeFormData, AddEmployeeFormErrors } from "../lib/employee/types";
+import { createInitialAddEmployeeForm } from "../lib/employee/createInitialAddEmployeeForm";
+import validateAddEmployeeForm from "../lib/employee/validateAddEmployeeForm";
+import AddEmployeeButton from "./addEmployeeButton";
+import AddEmployeeForm from "./AddEmployeeForm";
 
-import { AddEmployeeButton } from './addEmployeeButton';
-import validateAddEmployeeForm from '../lib/employee/validateAddEmployeeForm';
 
-export const AddEmployeeDialog = () => {
+const createInitialErrors = (): AddEmployeeFormErrors => {
+  return {
+    firstName: '',
+    lastName: '',
+    firstNameEng: '',
+    lastNameEng: '',
+    email: '',
+    employeeCode: '',
+    department: '',
+    branch: '',
+    level: '',
+    hireDate: '',
+  };
+};
+
+const isFormValid = (
+  nextErrors: AddEmployeeFormErrors
+): boolean => {
+  return Object.values(nextErrors).every((value) => value === '');
+};
+
+const AddEmployeeDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState<AddEmployeeFormData>(
-    createInitialAddEmployeeForm(),
+    createInitialAddEmployeeForm()
   );
-  const [errors, setErrors] = useState<AddEmployeeFormErrors>({});
+  const [errors, setErrors] = useState<AddEmployeeFormErrors>(
+    createInitialErrors()
+  );
 
-  const openDialog = (): void => {
+  const handleOpen = (): void => {
     setIsOpen(true);
   };
 
-  const resetDialog = (): void => {
-    setForm(createInitialAddEmployeeForm());
-    setErrors({});
-  };
-
-  const closeDialog = (): void => {
+  const handleClose = (): void => {
     setIsOpen(false);
-    resetDialog();
+    setIsSubmitting(false);
+    setForm(createInitialAddEmployeeForm());
+    setErrors(createInitialErrors());
   };
 
-  const handleChange = (name: AddEmployeeFieldName, value: string): void => {
+  const handleChange = (
+    name: AddEmployeeFieldName,
+    value: string
+  ): void => {
     setForm((currentForm) => ({
       ...currentForm,
       [name]: value,
+    }));
+
+    setErrors((currentErrors) => ({
+      ...currentErrors,
+      [name]: '',
     }));
   };
 
   const handleSubmit = async (): Promise<void> => {
     const nextErrors = validateAddEmployeeForm(form);
 
-    if (Object.keys(nextErrors).length > 0) {
-      setErrors(nextErrors);
+    setErrors(nextErrors);
+
+    if (!isFormValid(nextErrors)) {
       return;
     }
 
-    setErrors({});
     setIsSubmitting(true);
 
     try {
-      console.log('EPAS onboarding payload', {
-        action: 'add_employee',
-        employee: form,
-      });
-
-      closeDialog();
+      handleClose();
     } finally {
       setIsSubmitting(false);
     }
@@ -66,35 +85,39 @@ export const AddEmployeeDialog = () => {
 
   return (
     <>
-      <AddEmployeeButton onClick={openDialog} />
+      <AddEmployeeButton onClick={handleOpen} />
 
       {isOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-5xl rounded-3xl bg-white shadow-2xl">
-            <div className="flex items-start justify-between border-b border-slate-200 px-6 py-5">
-              <div>
-                <h2 className="text-xl font-bold text-slate-900">
-                  Add Employee
-                </h2>
-                <p className="mt-1 text-sm text-slate-500">
-                  Create employee and start onboarding paperwork
-                </p>
-              </div>
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/30 px-4 py-8">
+          <div className="w-full max-w-4xl overflow-hidden rounded-md border border-[#cfcfcf] bg-[#e9ebf3] shadow-lg">
+            <div className="flex items-center justify-between border-b border-[#cfcfcf] bg-white px-4 py-2">
+              <h2 className="w-full text-center text-[14px] font-semibold text-[#1f1f1f]">
+                Add Employeeee
+              </h2>
+
+              <button
+                type="button"
+                aria-label="Close dialog"
+                onClick={handleClose}
+                className="ml-4 text-[18px] leading-none text-[#333333]"
+              >
+                ×
+              </button>
             </div>
 
-            <div className="p-6">
-              <AddEmployeeForm
-                form={form}
-                errors={errors}
-                isSubmitting={isSubmitting}
-                onCancel={closeDialog}
-                onChange={handleChange}
-                onSubmit={handleSubmit}
-              />
-            </div>
+            <AddEmployeeForm
+              form={form}
+              errors={errors}
+              isSubmitting={isSubmitting}
+              onCancel={handleClose}
+              onChange={handleChange}
+              onSubmit={handleSubmit}
+            />
           </div>
         </div>
       ) : null}
     </>
   );
 };
+
+export default AddEmployeeDialog;
