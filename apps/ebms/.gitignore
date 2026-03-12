@@ -1,2 +1,5 @@
+
+# clerk configuration (can include secrets)
+/.clerk/
 # OpenNext
 .open-next
