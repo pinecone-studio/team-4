@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import SignaturePad from 'signature_pad';
 
 const CANVAS_MAX_WIDTH = 500;
@@ -8,7 +8,9 @@ const CANVAS_MAX_HEIGHT = 220;
 const CANVAS_RATIO = CANVAS_MAX_HEIGHT / CANVAS_MAX_WIDTH;
 
 export function useSignaturePad(token: string | null) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [canvasElement, setCanvasElement] = useState<HTMLCanvasElement | null>(
+    null,
+  );
   const padRef = useRef<SignaturePad | null>(null);
   const draftSignatureUrlRef = useRef<string | null>(null);
   const [draftSignatureUrlState, setDraftSignatureUrlState] = useState<
@@ -20,8 +22,12 @@ export function useSignaturePad(token: string | null) {
     setDraftSignatureUrlState(value);
   };
 
+  const canvasRef = useCallback((node: HTMLCanvasElement | null) => {
+    setCanvasElement(node);
+  }, []);
+
   useEffect(() => {
-    const canvas = canvasRef.current;
+    const canvas = canvasElement;
     if (!canvas) {
       return undefined;
     }
@@ -104,7 +110,7 @@ export function useSignaturePad(token: string | null) {
       padRef.current?.off();
       padRef.current = null;
     };
-  }, []);
+  }, [canvasElement]);
 
   useEffect(() => {
     padRef.current?.clear();
