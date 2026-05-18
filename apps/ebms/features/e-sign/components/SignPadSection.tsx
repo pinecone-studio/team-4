@@ -1,7 +1,7 @@
-import type { RefObject } from 'react';
+import type { RefCallback } from 'react';
 
 type SignPadSectionProps = {
-  canvasRef: RefObject<HTMLCanvasElement | null>;
+  canvasRef: RefCallback<HTMLCanvasElement>;
   error: string | null;
   hasSignature: boolean;
   isApproved: boolean;
@@ -70,6 +70,7 @@ export function SignPadSection({
               <button
                 type="button"
                 onClick={onApprove}
+                disabled={isDisabled}
                 className="flex h-[70px] w-full items-center justify-center rounded-[18px] bg-[#23478a] text-[24px] font-semibold text-white transition hover:bg-[#1f407c] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {submitting
